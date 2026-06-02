@@ -40,6 +40,7 @@ Use the diagnostic client from another terminal:
 ```powershell
 $env:PENDRAGON_TOKEN = "dev-token"
 npm run client -- list-tools
+npm run client -- exec Write-Output hello
 npm run client -- call-tool powershell_execute '{ "command": "Write-Output hello" }'
 ```
 
