@@ -53,7 +53,48 @@ npm run client -- exec Get-ComputerInfo
 
 Expected `exec hostname` output includes JSON text with `stdout`, `stderr`, `exitCode`, `durationMs`, `truncated`, and `commandId`.
 
-## 3. How Agents Use Pendragon
+## 3. Test Multiple Servers
+
+If every Pendragon server uses the same token, use `PENDRAGON_URLS`:
+
+```powershell
+$env:PENDRAGON_TOKEN = "shared-token"
+$env:PENDRAGON_URLS = "http://win-1:7573/mcp,http://win-2:7573/mcp"
+npm run client -- exec hostname
+```
+
+You can also pass URLs directly:
+
+```powershell
+$env:PENDRAGON_TOKEN = "shared-token"
+npm run client -- --url http://win-1:7573/mcp --url http://win-2:7573/mcp exec hostname
+```
+
+For named servers or different token environment variables, use `PENDRAGON_TARGETS`:
+
+```powershell
+$env:PENDRAGON_WIN1_TOKEN = "token-for-win-1"
+$env:PENDRAGON_WIN2_TOKEN = "token-for-win-2"
+$env:PENDRAGON_TARGETS = @'
+[
+  {
+    "name": "build-runner",
+    "url": "http://win-1:7573/mcp",
+    "tokenEnv": "PENDRAGON_WIN1_TOKEN"
+  },
+  {
+    "name": "test-runner",
+    "url": "http://win-2:7573/mcp",
+    "tokenEnv": "PENDRAGON_WIN2_TOKEN"
+  }
+]
+'@
+npm run client -- exec hostname
+```
+
+In multi-target mode, the diagnostic client prints each result with the target name and URL so you can tell which Windows server answered.
+
+## 4. How Agents Use Pendragon
 
 Agents see Pendragon as an MCP tool server with these tools:
 
@@ -97,7 +138,7 @@ Close the session when finished:
 }
 ```
 
-## 4. Connect Codex
+## 5. Connect Codex
 
 Codex supports Streamable HTTP MCP servers with bearer-token authentication through `config.toml`. Put this in `~/.codex/config.toml`, or in `.codex/config.toml` for a trusted project:
 
@@ -127,7 +168,7 @@ For unattended runs, keep `default_tools_approval_mode = "prompt"` until you tru
 
 Codex reference: the Codex manual documents Streamable HTTP MCP servers with `url` and `bearer_token_env_var` in `config.toml`, and states that Codex reads the MCP server `instructions` field during initialization.
 
-## 5. Connect Claude Code
+## 6. Connect Claude Code
 
 Claude Code supports remote HTTP MCP servers. Add Pendragon with a bearer token header:
 
@@ -178,7 +219,7 @@ If using the Claude Agent SDK or a `.mcp.json` file, configure the HTTP server l
 
 Claude Code reference: Anthropic documents `claude mcp add --transport http <name> <url>`, bearer headers with `--header`, and HTTP config entries with `type`, `url`, and `headers`.
 
-## 6. Security Notes
+## 7. Security Notes
 
 Pendragon allows arbitrary PowerShell after authentication. Do not expose it to the public internet without additional controls.
 

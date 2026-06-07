@@ -92,6 +92,14 @@ npm run client -- list-tools
 npm run client -- exec Write-Output hello
 ```
 
+Target more than one Pendragon server with `PENDRAGON_URLS`:
+
+```powershell
+$env:PENDRAGON_TOKEN = "shared-token"
+$env:PENDRAGON_URLS = "http://win-1:7573/mcp,http://win-2:7573/mcp"
+npm run client -- exec hostname
+```
+
 ## Connect Agents
 
 Full setup guide: [Install Pendragon and Connect Agents](docs/INSTALL_AND_AGENT_USAGE.md)
@@ -151,6 +159,9 @@ Restrict your cloud firewall so TCP `7573` is reachable only from trusted IP add
 | Variable | Default | Description |
 | --- | --- | --- |
 | `PENDRAGON_TOKEN` | required | Bearer token required for all MCP requests. |
+| `PENDRAGON_URL` | `http://127.0.0.1:7573/mcp` | Diagnostic client URL for one Pendragon server. |
+| `PENDRAGON_URLS` | empty | Diagnostic client comma-separated URLs for multiple servers using `PENDRAGON_TOKEN`. |
+| `PENDRAGON_TARGETS` | empty | Diagnostic client JSON array for named servers and per-target token env vars. |
 | `PENDRAGON_HOST` | `127.0.0.1` | Bind host. Use `0.0.0.0` only behind a firewall or tunnel. |
 | `PENDRAGON_PORT` | `7573` | Bind port. |
 | `PENDRAGON_ENDPOINT_PATH` | `/mcp` | MCP endpoint path. |
